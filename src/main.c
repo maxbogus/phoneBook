@@ -58,10 +58,10 @@ void saveToFile(const struct PhoneEntry *entries, int lastFreeIndex)
     {
         fprintf(phonebook, "Phonenumber, Name, Surname\n");
         int index;
-        for (index = 0; index < lastFreeIndex; index++)
+        for (index = 0; index <= lastFreeIndex; index++)
         {
             struct PhoneEntry entry = entries[index];
-            fprintf(phonebook, "%s, %s, %s\n", entry.phoneNumber,
+            fprintf(phonebook, "%s, %s, %s", entry.phoneNumber,
                     entry.firstName, entry.secondName);
         }
         fclose(phonebook);
@@ -71,77 +71,77 @@ void saveToFile(const struct PhoneEntry *entries, int lastFreeIndex)
 int loadData(struct PhoneEntry *entries)
 {
     FILE *phonebook = fopen(PHONEBOOK_BASE_NAME, "r");
-    int result = 0;
+    int index = 0;
     if (!phonebook)
         printf("Can't open file\n");
     else
     {
         char buffer[PHONEBOOK_SIZE];
-
         int row = 0;
-        int column = 0;
         while (fgets(buffer,
                      PHONEBOOK_SIZE, phonebook))
         {
-            column = 0;
-            row++;
-            if (row == 1)
-                continue;
-
             char *value = strtok(buffer, ", ");
-            int index = row - 2;
-            result = index;
-            while (value)
+            index = row - 1;
+            if (row != 0)
             {
-                struct PhoneEntry entry;
-                if (column == 0)
+                int column;
+                column = 0;
+                while (value)
                 {
-                    strcpy(entry.phoneNumber, value);
-                }
+                    struct PhoneEntry entry;
+                    if (column == 0)
+                    {
+                        strcpy(entry.phoneNumber, value);
+                    }
 
-                // Column 2
-                if (column == 1)
-                {
-                    strcpy(entry.firstName, value);
-                }
+                    // Column 2
+                    if (column == 1)
+                    {
+                        strcpy(entry.firstName, value);
+                    }
 
-                // Column 3
-                if (column == 2)
-                {
-                    strcpy(entry.secondName, value);
-                    entries[index] = entry;
-                    printf("phone: %s firstName: %s surname: %s index = %d\n", entries[index].phoneNumber, entries[index].firstName, entries[index].secondName, index);
+                    // Column 3
+                    if (column == 2)
+                    {
+                        strcpy(entry.secondName, value);
+                        entries[index] = entry;
+                        printf("phone: %s firstName: %s surname: %s index = %d\n", entries[index].phoneNumber, entries[index].firstName, entries[index].secondName, index);
+                    }
+                    value = strtok(NULL, ", ");
+                    column++;
                 }
-                value = strtok(NULL, ", ");
-                column++;
             }
+            row++;
         }
+
         fclose(phonebook);
     }
-    return result;
+    return index;
 }
 
 void showEntries(struct PhoneEntry *entries, int lastFreeIndex)
 {
-    int index = 0;
-    while (index <= lastFreeIndex)
+    if (lastFreeIndex > 0)
     {
-        printf("phone: %s firstName: %s surname: %s \n", entries[index].phoneNumber, entries[index].firstName, entries[index].secondName);
-        index++;
+        int index = 0;
+        while (index <= lastFreeIndex)
+        {
+            printf("phone: %s firstName: %s surname: %s \n", entries[index].phoneNumber, entries[index].firstName, entries[index].secondName);
+            index++;
+        }
+    }
+    else
+    {
+        printf("No entries. \n");
     }
 }
-bool applyChanges()
-{
-    char answer[1] = "";
-    getInput(answer, "Apply? Yes - 1 | No - Other");
-    return strcmp(answer, "1");
-}
 
-void editEntry(const struct PhoneEntry *entries, int lastFreeIndex)
+void editEntry(struct PhoneEntry *entries, int lastFreeIndex)
 {
     struct PhoneEntry entry;
     bool exit = false;
-    bool apply = false;
+    int apply = 0;
 
     while (!exit)
     {
@@ -156,48 +156,40 @@ void editEntry(const struct PhoneEntry *entries, int lastFreeIndex)
             printf("Phone: %s \tName: %s \t Surname: %s.", entry.phoneNumber, entry.firstName, entry.secondName);
             char selectedField[1] = "";
             getInput(selectedField, "What field do you want to modify? 1 - Phone; 2 - Name; 3 - Surname; Other - exit");
-            int selection = (int)*selectedField;
-            char phoneNumber[15] = "";
-            char firstName[15] = "";
-            char secondName[15] = "";
+            int selection = (int)*selectedField - '0';
+            char phoneNumber[15];
+            char firstName[15];
+            char secondName[15];
+            strcpy(phoneNumber, entry.phoneNumber);
+            strcpy(firstName, entry.firstName);
+            strcpy(secondName, entry.secondName);
             switch (selection)
             {
             case 1:
-                printf("Current value: %s", entry.phoneNumber);
+                printf("Current value: %s\n", entry.phoneNumber);
                 getInput(phoneNumber, "Enter new value:");
-                apply = applyChanges();
-                if (apply)
-                {
-                    strcpy(entries[index].phoneNumber, phoneNumber);
-                }
-                exit = true;
                 break;
             case 2:
-                printf("Current value: %s", entry.firstName);
+                printf("Current value: %s\n", entry.firstName);
                 getInput(firstName, "Enter new value:");
-                apply = applyChanges();
-                if (apply)
-                {
-                    strcpy(entries[index].firstName, firstName);
-                }
-                exit = true;
                 break;
             case 3:
-                printf("Current value: %s", entry.secondName);
+                printf("Current value: %s\n", entry.secondName);
                 getInput(secondName, "Enter new value:");
-                apply = applyChanges();
-                if (apply)
-                {
-                    strcpy(entries[index].secondName, secondName);
-                }
-                exit = true;
                 break;
-            default:
-                exit = true;
+            };
+
+            char answer[1] = "";
+            getInput(answer, "Yes (1) | No (Other)");
+            apply = (int)*answer - '0';
+            if (apply == 1)
+            {
+                strcpy(entry.phoneNumber, phoneNumber);
+                strcpy(entry.firstName, firstName);
+                strcpy(entry.secondName, secondName);
+                printf("Phone: %s \tName: %s \t Surname: %s.", entry.phoneNumber, entry.firstName, entry.secondName);
+                entries[index] = entry;
             }
-        }
-        else
-        {
             exit = true;
         }
     }
@@ -252,7 +244,6 @@ void printMenu()
 
 int main()
 {
-    // TODO: Edit struct
     // TODO: Sort struct
     // TODO: Search struct
 
