@@ -1,0 +1,5 @@
+[
+    { "directory": "/Users/mboguslavsky/Repositories/phoneBook",
+      "arguments": ["/usr/bin/clang", "-Irelative", "-isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX13.1.sdk", "-DSOMEDEF=With spaces, quotes and \\-es.", "-c", "-o", "main.o", "main.c"],
+      "file": "main.c" }
+  ]
