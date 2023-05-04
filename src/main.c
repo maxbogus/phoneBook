@@ -137,6 +137,16 @@ void showEntries(struct PhoneEntry *entries, int lastFreeIndex)
     }
 }
 
+int getSelection(const char *question)
+{
+    char selectedField[1] = "";
+    getInput(selectedField, question);
+    return (int)*selectedField - '0';
+}
+
+const char *SELECT_FIELD_TO_MODIFY = "What field do you want to modify? 1 - Phone; 2 - Name; 3 - Surname; Other - exit";
+const char *SELECT_ENTRY_TO_MODIFY = "What entry do you want to modify?";
+const char *CONFIRM_MODIFICATION = "Yes (1) | No (Other)";
 void editEntry(struct PhoneEntry *entries, int lastFreeIndex)
 {
     struct PhoneEntry entry;
@@ -145,18 +155,15 @@ void editEntry(struct PhoneEntry *entries, int lastFreeIndex)
 
     while (!exit)
     {
-        char selectedEntry[1] = "";
         printf("Entries to modify: 0 - %d \n", lastFreeIndex);
-        getInput(selectedEntry, "What entry do you want to modify?");
-        int index = (int)*selectedEntry - '0';
+        int index = getSelection(SELECT_ENTRY_TO_MODIFY);
         if (0 <= index || index <= lastFreeIndex)
         {
             printf("Current entry:");
             entry = entries[index];
             printf("Phone: %s \tName: %s \t Surname: %s.", entry.phoneNumber, entry.firstName, entry.secondName);
-            char selectedField[1] = "";
-            getInput(selectedField, "What field do you want to modify? 1 - Phone; 2 - Name; 3 - Surname; Other - exit");
-            int selection = (int)*selectedField - '0';
+
+            int selection = getSelection(SELECT_FIELD_TO_MODIFY);
             char phoneNumber[15];
             char firstName[15];
             char secondName[15];
@@ -179,9 +186,7 @@ void editEntry(struct PhoneEntry *entries, int lastFreeIndex)
                 break;
             };
 
-            char answer[1] = "";
-            getInput(answer, "Yes (1) | No (Other)");
-            apply = (int)*answer - '0';
+            apply = getSelection(CONFIRM_MODIFICATION);
             if (apply == 1)
             {
                 strcpy(entry.phoneNumber, phoneNumber);
