@@ -139,9 +139,10 @@ void showEntries(struct PhoneEntry *entries, int lastFreeIndex)
 
 int getSelection(const char *question)
 {
-    char selectedField[1] = "";
-    getInput(selectedField, question);
-    return (int)*selectedField - '0';
+    int selectedField = 0;
+    printf("%s", question);
+    selectedField = getchar();
+    return selectedField - '0';
 }
 
 const char *SELECT_FIELD_TO_MODIFY = "What field do you want to modify? 1 - Phone; 2 - Name; 3 - Surname; Other - exit";
