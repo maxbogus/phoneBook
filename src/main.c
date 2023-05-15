@@ -1,8 +1,8 @@
-#include <stdio.h>
-#include <string.h>
-#include <stdbool.h>
 #include <assert.h>
+#include <stdbool.h>
+#include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <unistd.h>
 
 #include "main.h"
@@ -22,18 +22,6 @@ void getInput(char *buffer, const char *text)
     }
 }
 
-enum AppState
-{
-    Add,
-    Edit,
-    Search,
-    Export,
-    Import,
-    View,
-    Sort,
-    Exit
-};
-
 void addEntry(struct PhoneEntry *entries, int lastFreeIndex)
 {
     struct PhoneEntry entry = {};
@@ -47,6 +35,27 @@ void addEntry(struct PhoneEntry *entries, int lastFreeIndex)
     getchar();
     fflush(stdin);
 }
+
+int getSelection(const char *question)
+{
+    fflush(stdin);
+    int selectedField = 0;
+    printf("%s\n", question);
+    selectedField = getchar();
+    return selectedField - '0';
+}
+
+enum AppState
+{
+    Add,
+    Edit,
+    Search,
+    Export,
+    Import,
+    View,
+    Sort,
+    Exit
+};
 
 void saveToFile(const struct PhoneEntry *entries, int lastFreeIndex)
 {
@@ -137,18 +146,6 @@ void showEntries(struct PhoneEntry *entries, int lastFreeIndex)
     }
 }
 
-int getSelection(const char *question)
-{
-    fflush(stdin);
-    int selectedField = 0;
-    printf("%s\n", question);
-    selectedField = getchar();
-    return selectedField - '0';
-}
-
-const char *SELECT_FIELD_TO_MODIFY = "What field do you want to modify? 1 - Phone; 2 - Name; 3 - Surname; Other - exit";
-const char *SELECT_ENTRY_TO_MODIFY = "What entry do you want to modify?";
-const char *CONFIRM_MODIFICATION = "Yes (1) | No (Other)";
 void editEntry(struct PhoneEntry *entries, int lastFreeIndex)
 {
     struct PhoneEntry entry;
@@ -161,7 +158,7 @@ void editEntry(struct PhoneEntry *entries, int lastFreeIndex)
         {
             printf("Current entry:\n");
             entry = entries[index];
-            printf("Phone: %s \tName: %s \t Surname: %s.\n", entry.phoneNumber, entry.firstName, entry.secondName);
+            printf("Phone: %s \tName: %s \t Surname: %s.", entry.phoneNumber, entry.firstName, entry.secondName);
 
             int selection = getSelection(SELECT_FIELD_TO_MODIFY);
             char phoneNumber[15];
@@ -252,6 +249,7 @@ int main()
 {
     // TODO: Sort struct
     // TODO: Search struct
+    // TODO: allocate file dynamically while loading file
 
     // generate test data
     int exitCode = 0;
