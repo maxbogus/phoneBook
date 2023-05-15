@@ -139,8 +139,9 @@ void showEntries(struct PhoneEntry *entries, int lastFreeIndex)
 
 int getSelection(const char *question)
 {
+    fflush(stdin);
     int selectedField = 0;
-    printf("%s", question);
+    printf("%s\n", question);
     selectedField = getchar();
     return selectedField - '0';
 }
@@ -152,17 +153,15 @@ void editEntry(struct PhoneEntry *entries, int lastFreeIndex)
 {
     struct PhoneEntry entry;
     bool exit = false;
-    int apply = 0;
-
     while (!exit)
     {
         printf("Entries to modify: 0 - %d \n", lastFreeIndex);
         int index = getSelection(SELECT_ENTRY_TO_MODIFY);
         if (0 <= index || index <= lastFreeIndex)
         {
-            printf("Current entry:");
+            printf("Current entry:\n");
             entry = entries[index];
-            printf("Phone: %s \tName: %s \t Surname: %s.", entry.phoneNumber, entry.firstName, entry.secondName);
+            printf("Phone: %s \tName: %s \t Surname: %s.\n", entry.phoneNumber, entry.firstName, entry.secondName);
 
             int selection = getSelection(SELECT_FIELD_TO_MODIFY);
             char phoneNumber[15];
@@ -187,13 +186,14 @@ void editEntry(struct PhoneEntry *entries, int lastFreeIndex)
                 break;
             };
 
+            int apply = 0;
             apply = getSelection(CONFIRM_MODIFICATION);
             if (apply == 1)
             {
                 strcpy(entry.phoneNumber, phoneNumber);
                 strcpy(entry.firstName, firstName);
                 strcpy(entry.secondName, secondName);
-                printf("Phone: %s \tName: %s \t Surname: %s.", entry.phoneNumber, entry.firstName, entry.secondName);
+                printf("\nPhone: %s \tName: %s \t Surname: %s.", entry.phoneNumber, entry.firstName, entry.secondName);
                 entries[index] = entry;
             }
             exit = true;
