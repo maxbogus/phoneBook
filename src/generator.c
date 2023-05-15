@@ -23,7 +23,7 @@ void generatePhone(char *str, int limit)
         case 0:
             break;
         case 1:
-            charNumber = 4;
+            charNumber = 9;
             break;
         case 2:
             charNumber = index % 3;
@@ -32,7 +32,7 @@ void generatePhone(char *str, int limit)
             charNumber = rand() % 9;
             break;
         }
-        str[index] = (charNumber) + '0';
+        str[index] = (index != limit) ? (charNumber) + '0' : '\0';
     }
 }
 
@@ -46,7 +46,7 @@ int main()
         fprintf(file, "Phonenumber,Name,Surname\n");
         for (index = 0; index < FILE_SIZE; index++)
         {
-            char phone[10];
+            char phone[11];
             generatePhone(phone, 10);
             fprintf(file, "%s,%s,%s\n", phone, names[index % 23], surnames[index % 36]);
         }
