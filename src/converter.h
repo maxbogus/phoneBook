@@ -1,0 +1,1 @@
+long convertPhone(char *phone);
