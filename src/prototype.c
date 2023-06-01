@@ -1,35 +1,36 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
-struct set
-{
-    int key;
-    int data;
-};
-struct set *array;
+#include "prototype.h"
+
+struct PhoneEntry *phoneBook;
 int capacity = 10;
 int size = 0;
+int charLimit = 15;
 
 int hashFunction(int key)
 {
     return (key % capacity);
 }
+
 int checkPrime(int n)
 {
-    int i;
-    if (n == 1 || n == 0)
-    {
+    if (n <= 1)
         return 0;
-    }
-    for (i = 2; i < n / 2; i++)
-    {
-        if (n % i == 0)
-        {
+    if (n <= 3)
+        return 1;
+
+    if (n % 2 == 0 || n % 3 == 0)
+        return 0;
+
+    for (int i = 5; i * i <= n; i = i + 6)
+        if (n % i == 0 || n % (i + 2) == 0)
             return 0;
-        }
-    }
+
     return 1;
 }
+
 int getPrime(int n)
 {
     if (n % 2 == 0)
@@ -42,30 +43,38 @@ int getPrime(int n)
     }
     return n;
 }
+
 void init_array()
 {
     capacity = getPrime(capacity);
-    array = (struct set *)malloc(capacity * sizeof(struct set));
-    for (int i = 0; i < capacity; i++)
+    phoneBook = (struct PhoneEntry *)malloc(capacity * sizeof(struct PhoneEntry));
+    for (int index = 0; index < capacity; index++)
     {
-        array[i].key = 0;
-        array[i].data = 0;
+        phoneBook[index].key = 0;
+        char emptyString[15] = {'\0'};
+        strcpy(phoneBook[index].phoneNumber, emptyString);
+        strcpy(phoneBook[index].firstName, emptyString);
+        strcpy(phoneBook[index].secondName, emptyString);
     }
 }
 
-void insert(int key, int data)
+void insert(int key, char phoneNumber[charLimit], char firstName[charLimit], char secondName[charLimit])
 {
     int index = hashFunction(key);
-    if (array[index].data == 0)
+    if (strlen(phoneBook[index].phoneNumber) == 0)
     {
-        array[index].key = key;
-        array[index].data = data;
+        phoneBook[index].key = key;
+        strcpy(phoneBook[index].phoneNumber, phoneNumber);
+        strcpy(phoneBook[index].firstName, firstName);
+        strcpy(phoneBook[index].secondName, secondName);
         size++;
         printf("\n Key (%d) has been inserted \n", key);
     }
-    else if (array[index].key == key)
+    else if (phoneBook[index].key == key)
     {
-        array[index].data = data;
+        strcpy(phoneBook[index].phoneNumber, phoneNumber);
+        strcpy(phoneBook[index].firstName, firstName);
+        strcpy(phoneBook[index].secondName, secondName);
     }
     else
     {
@@ -76,30 +85,32 @@ void insert(int key, int data)
 void remove_element(int key)
 {
     int index = hashFunction(key);
-    if (array[index].data == 0)
+    if (strlen(phoneBook[index].phoneNumber) == 0)
     {
         printf("\n This key does not exist \n");
     }
     else
     {
-        array[index].key = 0;
-        array[index].data = 0;
+        phoneBook[index].key = 0;
+        strcpy(phoneBook[index].phoneNumber, "");
+        strcpy(phoneBook[index].firstName, "");
+        strcpy(phoneBook[index].secondName, "");
         size--;
         printf("\n Key (%d) has been removed \n", key);
     }
 }
 void display()
 {
-    int i;
-    for (i = 0; i < capacity; i++)
+    int index;
+    for (index = 0; index < capacity; index++)
     {
-        if (array[i].data == 0)
+        if (strlen(phoneBook[index].phoneNumber) == 0)
         {
-            printf("\n array[%d]: / ", i);
+            printf("\n array[%d]: / ", index);
         }
         else
         {
-            printf("\n key: %d array[%d]: %d \t", array[i].key, i, array[i].data);
+            printf("\n key: %d array[%d]: %s, %s, %s \t", phoneBook[index].key, index, phoneBook[index].phoneNumber, phoneBook[index].firstName, phoneBook[index].secondName);
         }
     }
 }
@@ -111,17 +122,22 @@ int size_of_hashtable()
 
 int main()
 {
-    int choice, key, data, n;
+    int choice, key, n;
+
+    char phoneNumber[charLimit], firstName[charLimit], secondName[charLimit];
     int c = 0;
     init_array();
 
     do
     {
-        printf("1.Insert item in the Hash Table"
-               "\n2.Remove item from the Hash Table"
-               "\n3.Check the size of Hash Table"
-               "\n4.Display a Hash Table"
-               "\n\n Please enter your choice: ");
+        printf("Welcome to the Phone book app!"
+                "\n1 - Add|Edit item"
+                "\n2 - Delete item"
+                "\n3 - Show number of items in hashTable"
+                "\n4 - View (Desc)"
+                "\n5 - Import"
+                "\n6 - Export"
+                "\n\n Please enter your choice: ");
 
         scanf("%d", &choice);
         switch (choice)
@@ -129,10 +145,14 @@ int main()
         case 1:
 
             printf("Enter key -:\t");
-            scanf("%d", &key);
-            printf("Enter data -:\t");
-            scanf("%d", &data);
-            insert(key, data);
+            scanf("%d%*c", &key);
+            printf("Enter phoneNumber -:\t");
+            scanf("%[^\n]%*c",phoneNumber);
+            printf("Enter firstName -:\t");
+            scanf("%[^\n]%*c",firstName);
+            printf("Enter secondtName -:\t");
+            scanf("%[^\n]%*c",secondName);
+            insert(key, phoneNumber, firstName, secondName);
 
             break;
 
@@ -152,6 +172,18 @@ int main()
             break;
 
         case 4:
+
+            display();
+
+            break;
+
+        case 5:
+
+            display();
+
+            break;
+
+        case 6:
 
             display();
 
