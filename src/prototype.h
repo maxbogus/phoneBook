@@ -1,4 +1,5 @@
 #define BUFFERSIZE 15
+#define PHONEBOOK_BASE_NAME "phonebook.csv"
 
 struct set
 {
