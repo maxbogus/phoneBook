@@ -175,19 +175,20 @@ void init_array()
     int sizeOfEntries = capacity;
     capacity = getPrime(capacity);
     phoneBook = (struct PhoneEntry *)malloc(capacity * sizeof(struct PhoneEntry));
+    printf("%d, %d", sizeOfEntries, capacity);
     for (int index = 0; index < capacity; index++)
     {
         if (index < sizeOfEntries) {
-            // GET LONG
-            // convert to index
-            // copy temp data to phoneBook
+            phoneBook[index].key = index;
+            strcpy(phoneBook[index].phoneNumber, tempPhoneBook[index].phoneNumber);
+            strcpy(phoneBook[index].firstName, tempPhoneBook[index].firstName);
+            strcpy(phoneBook[index].secondName, tempPhoneBook[index].secondName);
         } else {
             phoneBook[index].key = 0;
             strcpy(phoneBook[index].phoneNumber, emptyString);
             strcpy(phoneBook[index].firstName, emptyString);
             strcpy(phoneBook[index].secondName, emptyString);
         }
-        
     }
 }
 
