@@ -51,10 +51,7 @@ void insert(int key, char phoneNumber[charLimit], char firstName[charLimit], cha
 {
     int index = hashFunction(key);
     if (
-        strlen(phoneBook[index].phoneNumber) == 0 
-        && strlen(phoneBook[index].firstName) == 0
-        && strlen(phoneBook[index].secondName) == 0 
-    )
+        strlen(phoneBook[index].phoneNumber) == 0 && strlen(phoneBook[index].firstName) == 0 && strlen(phoneBook[index].secondName) == 0)
     {
         phoneBook[index].key = key;
         strcpy(phoneBook[index].phoneNumber, phoneNumber);
@@ -79,10 +76,7 @@ void remove_element(int key)
 {
     int index = hashFunction(key);
     if (
-        strlen(phoneBook[index].phoneNumber) == 0 
-        && strlen(phoneBook[index].firstName) == 0
-        && strlen(phoneBook[index].secondName) == 0 
-    )
+        strlen(phoneBook[index].phoneNumber) == 0 && strlen(phoneBook[index].firstName) == 0 && strlen(phoneBook[index].secondName) == 0)
     {
         printf("\n This key does not exist \n");
     }
@@ -108,7 +102,7 @@ void display()
         }
         else
         {
-            printf("\n key: %d array[%d]: %s, %s, %s \t", phoneBook[index].key, index, phoneBook[index].phoneNumber, phoneBook[index].firstName, phoneBook[index].secondName);
+            printf("\n key: %d: %s, %s, %s \t", phoneBook[index].key, phoneBook[index].phoneNumber, phoneBook[index].firstName, phoneBook[index].secondName);
         }
     }
 }
@@ -116,7 +110,7 @@ void display()
 void displayBackward()
 {
     int index;
-    for (index = capacity; index > 0; index--)
+    for (index = capacity - 1; index >= 0; index--)
     {
         if (strlen(phoneBook[index].phoneNumber) == 0)
         {
@@ -172,18 +166,21 @@ long convertPhone(char *phone)
 
 void init_array()
 {
-    int sizeOfEntries = capacity;
+    capacity = size;
     capacity = getPrime(capacity);
     phoneBook = (struct PhoneEntry *)malloc(capacity * sizeof(struct PhoneEntry));
-    printf("%d, %d", sizeOfEntries, capacity);
+    printf("%d, %d", size, capacity);
     for (int index = 0; index < capacity; index++)
     {
-        if (index < sizeOfEntries) {
+        if (index < size)
+        {
             phoneBook[index].key = index;
             strcpy(phoneBook[index].phoneNumber, tempPhoneBook[index].phoneNumber);
             strcpy(phoneBook[index].firstName, tempPhoneBook[index].firstName);
             strcpy(phoneBook[index].secondName, tempPhoneBook[index].secondName);
-        } else {
+        }
+        else
+        {
             phoneBook[index].key = 0;
             strcpy(phoneBook[index].phoneNumber, emptyString);
             strcpy(phoneBook[index].firstName, emptyString);
@@ -201,17 +198,21 @@ int loadData()
     else
     {
         tempPhoneBook = (struct PhoneEntry *)calloc(capacity, sizeof(struct PhoneEntry));
-        char buffer[10];
+        char buffer[1024];
         while (fgets(buffer,
-                     10, phonebook))
+                     1024, phonebook))
         {
-            if (row >= capacity) {
+            if (row >= capacity)
+            {
                 capacity += 1;
                 struct PhoneEntry *temp;
-                temp = (struct PhoneEntry *) realloc (tempPhoneBook, capacity * sizeof(struct PhoneEntry));
-                if (temp != NULL) {
+                temp = (struct PhoneEntry *)realloc(tempPhoneBook, capacity * sizeof(struct PhoneEntry));
+                if (temp != NULL)
+                {
                     tempPhoneBook = temp;
-                } else {
+                }
+                else
+                {
                     printf("problem");
                     return -1;
                 }
@@ -221,6 +222,7 @@ int loadData()
             {
                 int column;
                 column = 0;
+                printf("%s\n", value);
                 while (value)
                 {
                     struct PhoneEntry entry;
@@ -239,8 +241,9 @@ int loadData()
                     if (column == 2)
                     {
                         strcpy(entry.secondName, value);
-                        long phoneNumber = convertPhone(entry.phoneNumber);
+                        // long phoneNumber = convertPhone(entry.phoneNumber);
                         int index = row - 1;
+                        entry.key = index;
                         tempPhoneBook[index] = entry;
                         printf("phone: %s firstName: %s surname: %s index = %d\n", tempPhoneBook[index].phoneNumber, tempPhoneBook[index].firstName, tempPhoneBook[index].secondName, index);
                     }
@@ -254,7 +257,7 @@ int loadData()
         fclose(phonebook);
     }
 
-    return row;
+    return row - 1;
 }
 
 int main()
@@ -263,20 +266,21 @@ int main()
     char phoneNumber[charLimit], firstName[charLimit], secondName[charLimit];
 
     int c = 0;
-    capacity = loadData();
+    size = loadData();
+
     init_array();
 
     do
     {
         printf("Welcome to the Phone book app!"
-                "\n1 - Add|Edit item"
-                "\n2 - Delete item"
-                "\n3 - Show number of items in hashTable"
-                "\n4 - View (Desc)"
-                "\n5 - View (Asc)"
-                "\n6 - Export"
-                "\n7 - Export"
-                "\n\n Please enter your choice: ");
+               "\n1 - Add|Edit item"
+               "\n2 - Delete item"
+               "\n3 - Show number of items in hashTable"
+               "\n4 - View (Desc)"
+               "\n5 - View (Asc)"
+               "\n6 - Export"
+               "\n7 - Export"
+               "\n\n Please enter your choice: ");
         scanf("%d", &choice);
 
         switch (choice)
@@ -285,11 +289,11 @@ int main()
             printf("Enter key -:\t");
             scanf("%d%*c", &key);
             printf("Enter phoneNumber -:\t");
-            scanf("%[^\n]%*c",phoneNumber);
+            scanf("%[^\n]%*c", phoneNumber);
             printf("Enter firstName -:\t");
-            scanf("%[^\n]%*c",firstName);
+            scanf("%[^\n]%*c", firstName);
             printf("Enter secondtName -:\t");
-            scanf("%[^\n]%*c",secondName);
+            scanf("%[^\n]%*c", secondName);
             insert(key, phoneNumber, firstName, secondName);
 
             break;
@@ -317,7 +321,7 @@ int main()
 
             break;
         case 7:
-            capacity = loadData();
+            size = loadData();
             init_array();
 
             break;
