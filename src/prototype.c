@@ -181,10 +181,8 @@ void fill_array()
     for (int index = 0; index < size; index++)
     {
         long convertedPhone = convertPhone(tempPhoneBook[index].phoneNumber);
-
         int phoneBookIndex = hashFunctionLong(convertedPhone);
 
-        printf("%ld %d %s \n", convertedPhone, phoneBookIndex, tempPhoneBook[index].phoneNumber);
         phoneBook[phoneBookIndex].key = phoneBookIndex;
         strcpy(phoneBook[phoneBookIndex].phoneNumber, tempPhoneBook[index].phoneNumber);
         strcpy(phoneBook[phoneBookIndex].firstName, tempPhoneBook[index].firstName);
@@ -200,6 +198,7 @@ int loadData()
         printf("Can't open file\n");
     else
     {
+        printf("Import started.\n");
         int row = 0;
         tempPhoneBook = (struct PhoneEntry *)calloc(capacity, sizeof(struct PhoneEntry));
         char buffer[1024];
@@ -247,7 +246,7 @@ int loadData()
                         index = row - 1;
                         entry.key = index;
                         tempPhoneBook[index] = entry;
-                        printf("phone: %s firstName: %s surname: %s index = %d\n", tempPhoneBook[index].phoneNumber, tempPhoneBook[index].firstName, tempPhoneBook[index].secondName, index);
+                        // printf("phone: %s firstName: %s surname: %s index = %d\n", tempPhoneBook[index].phoneNumber, tempPhoneBook[index].firstName, tempPhoneBook[index].secondName, index);
                     }
                     value = strtok(NULL, ", ");
                     column++;
@@ -255,7 +254,7 @@ int loadData()
             }
             row++;
         }
-
+        printf("Import completed.\n");
         fclose(phonebook);
     }
 
@@ -281,59 +280,86 @@ int main()
                "\n3 - Show number of items in hashTable"
                "\n4 - View (Desc)"
                "\n5 - View (Asc)"
-               "\n6 - Export"
-               "\n7 - Import"
+               "\n6 - Search by phone"
+               "\n7 - Export"
+               "\n8 - Import"
                "\n\n Please enter your choice: ");
         scanf("%d", &choice);
 
         switch (choice)
         {
         case 1:
-            printf("Enter key -:\t");
-            scanf("%d%*c", &key);
-            printf("Enter phoneNumber -:\t");
+        {
+            fflush(stdin);
+            printf("Enter phone number -:\t");
             scanf("%11[^\n]%*c", phoneNumber);
             fflush(stdin);
-            printf("Enter firstName -:\t");
+            printf("Enter first name -:\t");
             scanf("%14[^\n]%*c", firstName);
             fflush(stdin);
-            printf("Enter secondtName -:\t");
+            printf("Enter second name -:\t");
             scanf("%14[^\n]%*c", secondName);
             fflush(stdin);
-            insert(key, phoneNumber, firstName, secondName);
+
+            long convertedPhone = convertPhone(phoneNumber);
+            insert(hashFunctionLong(convertedPhone), phoneNumber, firstName, secondName);
 
             break;
+        }
         case 2:
+        {
             printf("Enter the key to delete-:");
             scanf("%d", &key);
             remove_element(key);
 
             break;
+        }
         case 3:
+        {
             n = size_of_hashtable();
             printf("Size of Hash Table is-:%d\n", n);
 
             break;
+        }
         case 4:
+        {
             displayBackward();
 
             break;
+        }
         case 5:
+        {
             display();
-
-            break;
+        }
         case 6:
+        {
+            fflush(stdin);
+            printf("Enter phone number -:\t");
+            scanf("%11[^\n]%*c", phoneNumber);
+            long convertedPhone = convertPhone(phoneNumber);
+            int index = hashFunctionLong(convertedPhone);
+            struct PhoneEntry entry = phoneBook[index];
+            printf("%d: %s %s %s", index, entry.phoneNumber, entry.firstName, entry.secondName);
+            break;
+        }
+        case 7:
+        {
             saveToFile();
 
             break;
-        case 7:
+        }
+        case 8:
+        {
             size = loadData();
             init_array();
             fill_array();
 
             break;
+        }
         default:
+        {
             printf("Invalid Input\n");
+        }
         }
 
         printf("\nDo you want to continue (press 1 for yes): ");
