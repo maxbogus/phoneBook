@@ -278,7 +278,7 @@ int main()
                "\n3 - Show number of items in hashTable"
                "\n4 - View (Desc)"
                "\n5 - View (Asc)"
-               "\n6 - Export"
+               "\n6 - Import"
                "\n7 - Export"
                "\n\n Please enter your choice: ");
         scanf("%d", &choice);
