@@ -1,2 +1,2 @@
-#define FILE_SIZE 100000
+#define FILE_SIZE 10000000
 #define fileName "phonebook.csv"
