@@ -48,7 +48,7 @@ int main()
         {
             char phone[11];
             generatePhone(phone, 10);
-            fprintf(file, "%s,%s,%s\n", phone, names[index % 23], surnames[index % 36]);
+            fprintf(file, "%s, %s, %s\n", phone, names[index % 23], surnames[index % 36]);
         }
         printf("Generation complete.\n");
         fclose(file);
