@@ -12,8 +12,5 @@ Phonebook cli app with generator
 - To configure amount of generated lines set FILE_SIZE const in the generator.h
 
 # Usage
-## Adding info
-
-## Editing info
-
-## Searching info
+Application allows to import, search, add, delete, update data in the phoneBook and export it to the csv file.
+It also allows to generate some csv prefilled with required random data.
